@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>CryptoJS Decryption</title>
+    <style type="text/css">
+        .auto-style1 {
+            width: 100%;
+        }
+        .st_right {
+        width:40%; text-align:right;
+        }
+        .st_left {
+        width:58%; text-align:left;
+        }
+
+    </style>
+	<meta charset="utf-8" /><script src="oliveAES.js"></script>
+	<meta charset="utf-8" /><script src="AesUtil.js"></script>
+	<meta charset="utf-8" /><script src="olivePBKD2.js"></script>
+    <script type="text/javascript">
+	debugger;
+        <!-- function generateHash() { -->
+			<!-- var username =document.getElementById('txtName').value; -->
+			<!-- var password =document.getElementById('txtPwd').value; -->
+			<!-- alert(username); -->
+			<!-- alert(password); -->
+		
+		
+            <!-- var Key = CryptoJS.enc.Utf8.parse(document.getElementById('txt_Key').value); -->
+            <!-- var iv = CryptoJS.enc.Utf8.parse(document.getElementById('txt_IV').value); -->
+            <!-- var Pwd = document.getElementById('txtPwd').value; -->
+            <!-- alert(Key+","+ iv+","+ Pwd); -->
+            <!-- var dpass = CryptoJS.AES.decrypt(Pwd, Key, -->
+            <!-- { -->
+                <!-- keySize: 128 / 8, -->
+                <!-- iv: iv, -->
+                <!-- mode: CryptoJS.mode.CBC, -->
+                <!-- padding: CryptoJS.pad.Pkcs7 -->
+            <!-- }); -->
+            <!-- //alert("decrypted password:" + dpass.toString(CryptoJS.enc.Utf8));txt_Msg -->
+            <!-- //label.innerHTML = dpass.toString(CryptoJS.enc.Utf8); -->
+            <!-- document.getElementById('txt_Msg').value = dpass.toString(CryptoJS.enc.Utf8); -->
+            <!-- //alert("decrypted password:" + label.innerHTML); -->
+        <!-- } -->
+		function generateHash(){
+			//alert(password);
+			if( document.getElementById('txtPwd').value != ''){
+				var username =document.getElementById('txtName').value;
+				var password =document.getElementById('txtPwd').value;
+				//alert(username);
+				//alert(password);
+				var iv = CryptoJS.lib.WordArray.random(128 / 8).toString(CryptoJS.enc.Hex);
+				var salt = CryptoJS.lib.WordArray.random(128 / 8).toString(CryptoJS.enc.Hex);
+				document.getElementById('txt_IV').value = iv;
+				document.getElementById('txt_Key').value = salt;
+				//alert(iv);
+				//alert(salt);
+				var aesUtil = new AesUtil(128, 1000);
+				var ciphertext = aesUtil.encrypt(salt, iv, username, password);
+				var aesPassword = (iv + "::" + salt + "::" + ciphertext);
+				var enc = btoa(aesPassword);
+				//alert(enc);
+				document.getElementById('txt_Enc').value = enc;
+				//var enc = CryptoJS.AES.encrypt(password, username).toString(CryptoJS.enc.utf8);
+				//$("#password").val(enc);
+			}
+			//alert(enc);
+		}
+		function generateDeHash(){
+			//alert(password);
+			if( document.getElementById('txt_Enc').value != ''){
+				var salt =document.getElementById('txt_Key').value;
+				var iv =document.getElementById('txt_IV').value;
+				var passPhrase =document.getElementById('txtName').value;
+				var cipherText =document.getElementById('txt_Enc').value;
+				alert(salt);
+				alert(iv);
+				alert(passPhrase);
+				alert(cipherText);
+				//var iv = CryptoJS.lib.WordArray.random(128 / 8).toString(CryptoJS.enc.Hex);
+				//var salt = CryptoJS.lib.WordArray.random(128 / 8).toString(CryptoJS.enc.Hex);
+				//document.getElementById('txt_IV').value = iv;
+				//document.getElementById('txt_Key').value = salt;
+				//alert(iv);
+				//alert(salt);
+				var aesUtil = new AesUtil(128, 1000);
+				var cleartext = aesUtil.decrypt(salt, iv, passPhrase, cipherText);
+				//var aesPassword = (iv + "::" + salt + "::" + ciphertext);
+				//var enc = btoa(aesPassword);
+				//alert(enc);
+				document.getElementById('txt_Msg').value = cleartext;
+				//var enc = CryptoJS.AES.encrypt(password, username).toString(CryptoJS.enc.utf8);
+				//$("#password").val(enc);
+			}
+			//alert(enc);
+		}
+    </script>
+</head>
+<body>
+    <div style="width:100%; text-align:center;">
+        <h1 style="width:100%; text-align:center;">CryptoJS Decryption</h1>
+        <table class="auto-style1">
+            <tr>
+                <td style="width:40%; text-align:right;">Key:</td>
+                <td style="width:58%; text-align:left;"><input type="text" id="txt_Key" name="txt_Key" style="width:250px;" /></td>
+            </tr>
+            <tr>
+                <td style="width:40%; text-align:right;">IV:</td>
+                <td style="width:58%; text-align:left;"><input id="txt_IV" name="txt_IV" style="width:250px;" /></td>
+            </tr>
+            <tr>
+                <td style="width:40%; text-align:right;">UserName:</td>
+                <td style="width:58%; text-align:left;"><input id="txtName" name="txtName" style="width:250px;" /></td>
+            </tr>
+            <tr>
+                <td style="width:40%; text-align:right;">Password:</td>
+                <td style="width:58%; text-align:left;"><input id="txtPwd" name="txtPwd" style="width:250px;" /></td>
+            </tr>
+            <tr>
+				<td colspan="2"><input type="button" id="btn_Encrypt" value="Encrypt" onclick="generateHash()" /></td>
+            </tr>
+            <tr>
+                <td style="width:40%; text-align:right;">Encrypted Password:</td>
+                <td style="width:58%; text-align:left;"><input ID="txt_Enc" Text="" name="txt_Enc" style="width:450px;" /></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="button" id="btn_Decrypt" value="Decrypt" onclick="generateDeHash()" /></td>
+            </tr>
+            <tr>
+                <td style="width:40%; text-align:right;">Decrypted Password:</td>
+                <td style="width:58%; text-align:left;"><input ID="txt_Msg" Text="" name="txt_Msg" style="width:250px;" /></td>
+            </tr>
+            <tr>
+                <td style="width:40%; text-align:right;">&nbsp;</td>
+                <td style="width:58%; text-align:left;">&nbsp;</td>
+            </tr>
+        </table>
+        <div style="width:40%; text-align:right;">
+             
+        </div>
+        <div style="width:58%; text-align:left;">
+            
+        </div>
+        <div style="width:40%; text-align:right;">
+             
+        </div>
+        <div style="width:58%; text-align:left;">
+            
+        </div>
+        <div style="width:40%; text-align:right;">
+             
+        </div>
+        <div style="width:58%; text-align:left;">
+            
+        </div>
+        <div style="width:100%; text-align:center;">
+            
+        </div>
+        <div style="width:40%; text-align:right;">
+            
+        </div>
+        <div style="width:58%; text-align:left;">
+            
+        </div>
+            <br />
+             <br />
+             <br />
+            <br />
+            
+        </div>
+</body>
+</html>
